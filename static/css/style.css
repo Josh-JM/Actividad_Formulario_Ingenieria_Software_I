@@ -1,0 +1,329 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg-dark: #090d16;
+  --card-bg: rgba(30, 41, 59, 0.7);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --gradient-1: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+  --gradient-button: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --input-bg: rgba(15, 23, 42, 0.6);
+  --input-border: rgba(255, 255, 255, 0.12);
+  --input-focus-border: #818cf8;
+  --error: #f43f5e;
+  --success: #10b981;
+  --radius-lg: 24px;
+  --radius-md: 14px;
+  --radius-sm: 8px;
+  --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow-x: hidden;
+  padding: 24px 16px;
+}
+
+/* Dynamic background glows */
+body::before,
+body::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: -1;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+body::before {
+  width: 350px;
+  height: 350px;
+  background: #6366f1;
+  top: -80px;
+  left: -80px;
+}
+
+body::after {
+  width: 400px;
+  height: 400px;
+  background: #ec4899;
+  bottom: -100px;
+  right: -100px;
+}
+
+/* Card Container */
+.container {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 40px 36px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 999px;
+  color: #a5b4fc;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.header h1 {
+  font-size: 1.85rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  background: var(--gradient-1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+
+.header p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* Form Styles */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+.input-group {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  margin-bottom: 8px;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  pointer-events: none;
+  transition: color 0.2s;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+.form-control::placeholder {
+  color: #64748b;
+}
+
+.form-control:focus {
+  border-color: var(--input-focus-border);
+  box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.15);
+  background: rgba(15, 23, 42, 0.85);
+}
+
+.form-control:focus + .input-icon {
+  color: var(--primary);
+}
+
+/* Password Toggle Icon */
+.toggle-password {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  font-size: 1.1rem;
+  transition: color 0.2s;
+}
+
+.toggle-password:hover {
+  color: var(--text-main);
+}
+
+/* Flash Messages */
+.flash-container {
+  margin-bottom: 20px;
+}
+
+.flash-message {
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  animation: fadeIn 0.3s ease;
+}
+
+.flash-message.error {
+  background: rgba(244, 63, 94, 0.15);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  color: #fecdd3;
+}
+
+.flash-message.success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #a7f3d0;
+}
+
+/* Submit Button */
+.btn-submit {
+  width: 100%;
+  padding: 14px 24px;
+  background: var(--gradient-button);
+  border: none;
+  border-radius: var(--radius-md);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+  transition: all 0.25s ease;
+  margin-top: 10px;
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px -5px rgba(99, 102, 241, 0.5);
+  filter: brightness(1.08);
+}
+
+.btn-submit:active {
+  transform: translateY(0);
+}
+
+/* Loading Spinner */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 0.8s linear infinite;
+  display: none;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Footer / Extra links */
+.footer-text {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.footer-text a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.footer-text a:hover {
+  color: #a5b4fc;
+  text-decoration: underline;
+}
+
+/* Responsiveness */
+@media (max-width: 480px) {
+  .glass-card {
+    padding: 28px 20px;
+    border-radius: 18px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width {
+    grid-column: span 1;
+  }
+}
