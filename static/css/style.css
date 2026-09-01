@@ -1,24 +1,43 @@
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+/* Import Google Fonts - Plus Jakarta Sans */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --bg-dark: #090d16;
-  --card-bg: rgba(30, 41, 59, 0.7);
-  --card-border: rgba(255, 255, 255, 0.1);
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
-  --gradient-1: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
-  --gradient-button: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  --input-bg: rgba(15, 23, 42, 0.6);
+  /* Red, Black, and White Modern Palette */
+  --bg-dark: #09090b;
+  --bg-surface: #121216;
+  --card-bg: rgba(18, 18, 24, 0.82);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --card-border-hover: rgba(239, 68, 68, 0.35);
+
+  --text-main: #ffffff;
+  --text-secondary: #e2e8f0;
+  --text-muted: #8e8e9e;
+
+  /* Red Accents & Gradients */
+  --primary-red: #ef4444;
+  --primary-red-hover: #dc2626;
+  --primary-red-dark: #991b1b;
+  --gradient-red: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  --gradient-red-glow: linear-gradient(135deg, rgba(239, 68, 68, 0.5) 0%, rgba(185, 28, 28, 0.2) 100%);
+
+  /* Form Elements */
+  --input-bg: rgba(10, 10, 14, 0.75);
   --input-border: rgba(255, 255, 255, 0.12);
-  --input-focus-border: #818cf8;
-  --error: #f43f5e;
-  --success: #10b981;
-  --radius-lg: 24px;
-  --radius-md: 14px;
-  --radius-sm: 8px;
+  --input-border-focus: #ef4444;
+  --input-focus-glow: rgba(239, 68, 68, 0.2);
+
+  /* Feedback Colors */
+  --error: #ef4444;
+  --error-bg: rgba(239, 68, 68, 0.12);
+  --error-border: rgba(239, 68, 68, 0.3);
+  --success: #22c55e;
+  --success-bg: rgba(34, 197, 94, 0.12);
+  --success-border: rgba(34, 197, 94, 0.3);
+
+  /* Spacings & Geometry */
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --radius-sm: 6px;
   --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 
@@ -38,59 +57,64 @@ body {
   align-items: center;
   position: relative;
   overflow-x: hidden;
-  padding: 24px 16px;
+  padding: 32px 16px;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Dynamic background glows */
+/* Dynamic Red & Monochrome Background Ambient Lights */
 body::before,
 body::after {
   content: '';
   position: absolute;
   border-radius: 50%;
-  filter: blur(120px);
+  filter: blur(140px);
   z-index: -1;
-  opacity: 0.45;
   pointer-events: none;
 }
 
 body::before {
-  width: 350px;
-  height: 350px;
-  background: #6366f1;
-  top: -80px;
-  left: -80px;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.28) 0%, rgba(185, 28, 28, 0.05) 70%);
+  top: -100px;
+  right: -80px;
 }
 
 body::after {
-  width: 400px;
-  height: 400px;
-  background: #ec4899;
-  bottom: -100px;
-  right: -100px;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(20, 20, 25, 0) 70%);
+  bottom: -90px;
+  left: -80px;
 }
 
 /* Card Container */
 .container {
   width: 100%;
-  max-width: 520px;
+  max-width: 540px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
 .glass-card {
   background: var(--card-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
-  padding: 40px 36px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
-  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 44px 38px;
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8),
+              0 0 0 1px rgba(255, 255, 255, 0.05),
+              0 1px 30px rgba(239, 68, 68, 0.07);
+  animation: cardEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-@keyframes fadeIn {
+@keyframes cardEnter {
   from {
     opacity: 0;
-    transform: translateY(20px) scale(0.98);
+    transform: translateY(18px) scale(0.985);
   }
   to {
     opacity: 1;
@@ -101,36 +125,26 @@ body::after {
 /* Header */
 .header {
   text-align: center;
-  margin-bottom: 32px;
-}
-
-.brand-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 16px;
-  background: rgba(99, 102, 241, 0.12);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  border-radius: 999px;
-  color: #a5b4fc;
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-bottom: 16px;
+  margin-bottom: 30px;
 }
 
 .header h1 {
-  font-size: 1.85rem;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  background: var(--gradient-1);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-size: 1.95rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text-main);
   margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.header h1 .text-highlight {
+  color: var(--primary-red);
 }
 
 .header p {
   color: var(--text-muted);
   font-size: 0.95rem;
+  font-weight: 400;
 }
 
 /* Form Styles */
@@ -150,11 +164,20 @@ body::after {
 }
 
 .input-group label {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #cbd5e1;
+  color: var(--text-secondary);
   margin-bottom: 8px;
+  letter-spacing: 0.01em;
+}
+
+.input-hint {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-muted);
 }
 
 .input-wrapper {
@@ -163,18 +186,29 @@ body::after {
   align-items: center;
 }
 
+/* Professional SVG Icons */
 .input-icon {
   position: absolute;
   left: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--text-muted);
-  font-size: 1.1rem;
   pointer-events: none;
-  transition: color 0.2s;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.input-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
 }
 
 .form-control {
   width: 100%;
-  padding: 12px 16px 12px 44px;
+  padding: 13px 16px 13px 44px;
   background: var(--input-bg);
   border: 1px solid var(--input-border);
   border-radius: var(--radius-md);
@@ -182,97 +216,157 @@ body::after {
   font-family: inherit;
   font-size: 0.95rem;
   outline: none;
-  transition: all 0.25s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .form-control::placeholder {
-  color: #64748b;
+  color: #52525b;
 }
 
 .form-control:focus {
-  border-color: var(--input-focus-border);
-  box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.15);
-  background: rgba(15, 23, 42, 0.85);
+  border-color: var(--input-border-focus);
+  box-shadow: 0 0 0 3.5px var(--input-focus-glow);
+  background: rgba(14, 14, 20, 0.95);
 }
 
-.form-control:focus + .input-icon {
-  color: var(--primary);
+.form-control:focus ~ .input-icon {
+  color: var(--primary-red);
+  transform: scale(1.05);
 }
 
-/* Password Toggle Icon */
+/* Password Toggle Action */
 .toggle-password {
   position: absolute;
-  right: 14px;
-  background: none;
+  right: 12px;
+  background: transparent;
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 4px;
-  font-size: 1.1rem;
-  transition: color 0.2s;
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.toggle-password svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
 }
 
 .toggle-password:hover {
   color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Password requirements tooltip/helper */
+.password-requirements {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.password-requirements svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
 }
 
 /* Flash Messages */
 .flash-container {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .flash-message {
-  padding: 12px 16px;
+  padding: 13px 16px;
   border-radius: var(--radius-md);
   font-size: 0.9rem;
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 12px;
+  margin-bottom: 12px;
   animation: fadeIn 0.3s ease;
+  line-height: 1.4;
+}
+
+.flash-message svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
 
 .flash-message.error {
-  background: rgba(244, 63, 94, 0.15);
-  border: 1px solid rgba(244, 63, 94, 0.3);
-  color: #fecdd3;
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  color: #fca5a5;
+}
+
+.flash-message.error svg {
+  stroke: var(--error);
 }
 
 .flash-message.success {
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #a7f3d0;
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: #86efac;
+}
+
+.flash-message.success svg {
+  stroke: var(--success);
 }
 
 /* Submit Button */
 .btn-submit {
   width: 100%;
   padding: 14px 24px;
-  background: var(--gradient-button);
-  border: none;
+  background: var(--gradient-red);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-md);
   color: #ffffff;
   font-family: inherit;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.01em;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
-  transition: all 0.25s ease;
-  margin-top: 10px;
+  box-shadow: 0 10px 25px -4px rgba(239, 68, 68, 0.45),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: 12px;
+}
+
+.btn-submit svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2.2;
 }
 
 .btn-submit:hover {
   transform: translateY(-2px);
-  box-shadow: 0 15px 30px -5px rgba(99, 102, 241, 0.5);
-  filter: brightness(1.08);
+  box-shadow: 0 16px 32px -4px rgba(239, 68, 68, 0.6),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  filter: brightness(1.06);
 }
 
 .btn-submit:active {
   transform: translateY(0);
+}
+
+.btn-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* Loading Spinner */
@@ -281,7 +375,7 @@ body::after {
   height: 18px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  border-top-color: #fff;
+  border-top-color: #ffffff;
   animation: spin 0.8s linear infinite;
   display: none;
 }
@@ -292,31 +386,76 @@ body::after {
   }
 }
 
-/* Footer / Extra links */
-.footer-text {
-  text-align: center;
-  margin-top: 24px;
-  font-size: 0.85rem;
+/* Success Card Elements */
+.success-icon-badge {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 20px auto;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-red);
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.2);
+}
+
+.success-icon-badge svg {
+  width: 36px;
+  height: 36px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+.info-card {
+  background: rgba(10, 10, 14, 0.75);
+  padding: 18px 20px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--input-border);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+.info-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 10px;
+}
+
+.info-card-header svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--primary-red);
+  stroke-width: 2;
+  fill: none;
+}
+
+.info-card ol {
+  padding-left: 20px;
+  line-height: 1.6;
   color: var(--text-muted);
 }
 
-.footer-text a {
-  color: var(--primary);
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.2s;
-}
-
-.footer-text a:hover {
-  color: #a5b4fc;
-  text-decoration: underline;
+.info-card ol strong {
+  color: var(--text-main);
 }
 
 /* Responsiveness */
-@media (max-width: 480px) {
+@media (max-width: 520px) {
   .glass-card {
-    padding: 28px 20px;
-    border-radius: 18px;
+    padding: 32px 22px;
+    border-radius: 16px;
+  }
+
+  .header h1 {
+    font-size: 1.65rem;
   }
 
   .form-grid {

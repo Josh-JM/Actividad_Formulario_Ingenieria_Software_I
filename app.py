@@ -1,4 +1,5 @@
 import os
+import re
 from flask import Flask, render_template, request, redirect, url_for, flash
 from dotenv import load_dotenv
 from supabase import create_client, Client
@@ -36,24 +37,32 @@ def register():
     password = request.form.get("password", "")
     confirm_password = request.form.get("confirm_password", "")
 
-    # Validaciones básicas de campos vacíos
+    # 1. Validación de campos obligatorios
     if not all([first_name, last_name, email, age, password, confirm_password]):
         flash("Todos los campos son obligatorios.", "error")
         return redirect(url_for("index"))
 
-    # Validar coincidencia de contraseña
+    # 2. Validación de coincidencia de contraseñas
     if password != confirm_password:
         flash("Las contraseñas no coinciden.", "error")
         return redirect(url_for("index"))
 
-    # Validar edad numérica
+    # Regla de Validación 1: Mayoría de edad (18 a 100 años)
     try:
         age_int = int(age)
-        if age_int < 1 or age_int > 120:
-            flash("Ingresa una edad válida.", "error")
+        if age_int < 18 or age_int > 100:
+            flash("Debes tener al menos 18 años (y un máximo de 100 años) para registrarte.", "error")
             return redirect(url_for("index"))
     except ValueError:
-        flash("La edad debe ser un número entero.", "error")
+        flash("La edad debe ser un número entero válido.", "error")
+        return redirect(url_for("index"))
+
+    # Regla de Validación 2: Fortaleza de la contraseña (mínimo 8 caracteres, al menos 1 letra y 1 número)
+    if not re.search(r"^(?=.*[A-Za-z])(?=.*\d).{8,}$", password):
+        flash(
+            "La contraseña debe tener al menos 8 caracteres y contener al menos una letra y un número.",
+            "error",
+        )
         return redirect(url_for("index"))
 
     # Verificar si el cliente de Supabase está configurado
