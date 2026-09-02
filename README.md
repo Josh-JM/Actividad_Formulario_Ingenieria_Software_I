@@ -1,5 +1,11 @@
 # Sistema de Registro de Usuarios con Flask y SQLite
 
+### 👥 Integrantes
+- **Gelber Daniel Clemente Lopez**
+- **Josue André Menéndez Juárez**
+
+---
+
 Aplicación web desarrollada en **Python (Flask)** con persistencia en **SQLite** y gestión a través de **DataGrip**. Presenta una interfaz moderna con estilo *glassmorphism* en una paleta de colores **rojo, negro y blanco**, iconografía vectorial SVG profesional, validaciones robustas sincronizadas en cliente y servidor, y plantilla personalizada de confirmación.
 
 ---
