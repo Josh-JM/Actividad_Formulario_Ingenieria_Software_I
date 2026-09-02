@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verificación Enviada | Registro Exitoso</title>
+  <title>Registro Exitoso | Cuenta Creada</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -13,18 +13,18 @@
       <!-- Icono SVG Principal -->
       <div class="success-icon-badge">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-          <polyline points="22,6 12,13 2,6"></polyline>
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
         </svg>
       </div>
       
       <h1 style="font-size: 1.85rem; font-weight: 800; margin-bottom: 12px; color: var(--text-main);">
-        ¡Revisa tu <span class="text-highlight">correo electrónico</span>!
+        ¡Registro <span class="text-highlight">Exitoso</span>!
       </h1>
       
       <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; font-size: 0.98rem;">
-        Hemos enviado un enlace de validación de cuenta a:<br>
-        <strong style="color: #ffffff; font-size: 1.05rem; display: inline-block; margin-top: 4px; padding: 4px 12px; background: rgba(239, 68, 68, 0.15); border-radius: var(--radius-sm); border: 1px solid rgba(239, 68, 68, 0.3);">{{ email }}</strong>
+        ¡Hola <strong>{{ first_name }}</strong>! Tu cuenta ha sido registrada y guardada correctamente en la base de datos local SQLite:<br>
+        <strong style="color: #ffffff; font-size: 1.05rem; display: inline-block; margin-top: 8px; padding: 4px 12px; background: rgba(239, 68, 68, 0.15); border-radius: var(--radius-sm); border: 1px solid rgba(239, 68, 68, 0.3);">{{ email }}</strong>
       </p>
 
       <div class="info-card">
@@ -34,12 +34,12 @@
             <line x1="12" y1="16" x2="12" y2="12"></line>
             <line x1="12" y1="8" x2="12.01" y2="8"></line>
           </svg>
-          <span>Instrucciones de activación</span>
+          <span>Detalles del registro local</span>
         </div>
         <ol>
-          <li>Abre tu bandeja de entrada (o carpeta de Spam).</li>
-          <li>Haz clic en el enlace <strong>"Verificar Mi Cuenta"</strong> dentro del correo.</li>
-          <li>Tu cuenta quedará activada y lista para su uso.</li>
+          <li>Tus datos han sido persistidos de manera segura en el archivo <strong>database.db</strong>.</li>
+          <li>La contraseña fue protegida mediante un algoritmo de cifrado y hash seguro.</li>
+          <li>Puedes inspeccionar y consultar la tabla de usuarios directamente en <strong>DataGrip</strong>.</li>
         </ol>
       </div>
 
@@ -48,7 +48,7 @@
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
-        <span>Volver al Formulario</span>
+        <span>Registrar otro usuario</span>
       </a>
     </div>
   </div>

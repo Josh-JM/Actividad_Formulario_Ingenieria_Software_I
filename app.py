@@ -1,8 +1,9 @@
 import os
 import re
+import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, flash
 from dotenv import load_dotenv
-from supabase import create_client, Client
+from werkzeug.security import generate_password_hash
 
 # Cargar variables de entorno desde el archivo .env
 load_dotenv()
@@ -10,17 +11,45 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "super-secret-key-dev")
 
-# Configurar Cliente de Supabase
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+# Ruta absoluta de la base de datos SQLite
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+_raw_db = os.getenv("DATABASE_PATH", "database.db").strip()
 
-supabase_client: Client = None
+# Soporta tanto nombres de archivo directos como URIs estilo SQLAlchemy (sqlite:///archivo.db)
+if _raw_db.startswith("sqlite:////"):
+    _clean_db = _raw_db[10:]
+elif _raw_db.startswith("sqlite:///"):
+    _clean_db = _raw_db[10:]
+elif _raw_db.startswith("sqlite://"):
+    _clean_db = _raw_db[9:]
+elif _raw_db.startswith("sqlite:"):
+    _clean_db = _raw_db[7:]
+else:
+    _clean_db = _raw_db
 
-if SUPABASE_URL and SUPABASE_KEY and SUPABASE_URL != "https://your-project-id.supabase.co":
-    try:
-        supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
-    except Exception as e:
-        print(f"Error al inicializar cliente de Supabase: {e}")
+DATABASE_PATH = _clean_db if os.path.isabs(_clean_db) else os.path.normpath(os.path.join(BASE_DIR, _clean_db))
+
+
+def get_db_connection():
+    """Establece y devuelve una conexión a la base de datos SQLite."""
+    os.makedirs(os.path.dirname(DATABASE_PATH), exist_ok=True)
+    conn = sqlite3.connect(DATABASE_PATH, timeout=20.0)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def init_db():
+    """Inicializa la base de datos ejecutando el script schema.sql si es necesario."""
+    schema_path = os.path.join(BASE_DIR, "schema.sql")
+    if os.path.exists(schema_path):
+        conn = get_db_connection()
+        with open(schema_path, "r", encoding="utf-8") as f:
+            conn.executescript(f.read())
+        conn.close()
+
+
+# Inicializar la base de datos al arrancar
+init_db()
 
 
 @app.route("/")
@@ -51,7 +80,10 @@ def register():
     try:
         age_int = int(age)
         if age_int < 18 or age_int > 100:
-            flash("Debes tener al menos 18 años (y un máximo de 100 años) para registrarte.", "error")
+            flash(
+                "Debes tener al menos 18 años (y un máximo de 100 años) para registrarte.",
+                "error",
+            )
             return redirect(url_for("index"))
     except ValueError:
         flash("La edad debe ser un número entero válido.", "error")
@@ -65,43 +97,36 @@ def register():
         )
         return redirect(url_for("index"))
 
-    # Verificar si el cliente de Supabase está configurado
-    if not supabase_client:
-        flash(
-            "Configura tus credenciales SUPABASE_URL y SUPABASE_KEY en el archivo .env antes de registrarte.",
-            "error",
-        )
-        return redirect(url_for("index"))
+    # Hashear contraseña de forma segura
+    password_hash = generate_password_hash(password)
 
     try:
-        # Registrar el usuario en Supabase Auth enviando los metadatos
-        # Supabase enviará automáticamente el correo de verificación configurado
-        response = supabase_client.auth.sign_up(
-            {
-                "email": email,
-                "password": password,
-                "options": {
-                    "data": {
-                        "first_name": first_name,
-                        "last_name": last_name,
-                        "age": age_int,
-                    }
-                },
-            }
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Insertar el nuevo usuario en la base de datos SQLite
+        cursor.execute(
+            """
+            INSERT INTO users (first_name, last_name, email, age, password_hash)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (first_name, last_name, email, age_int, password_hash),
         )
+        conn.commit()
+        conn.close()
 
-        if response.user:
-            return render_template("success.html", email=email)
-        else:
-            flash("No se pudo completar el registro. Inténtalo nuevamente.", "error")
-            return redirect(url_for("index"))
+        return render_template("success.html", email=email, first_name=first_name)
 
-    except Exception as e:
+    except sqlite3.IntegrityError as e:
         error_msg = str(e)
-        if "User already registered" in error_msg:
+        if "UNIQUE constraint failed: users.email" in error_msg or "users.email" in error_msg:
             flash("Este correo electrónico ya está registrado.", "error")
         else:
-            flash(f"Error al registrar usuario: {error_msg}", "error")
+            flash(f"Error de integridad en los datos: {error_msg}", "error")
+        return redirect(url_for("index"))
+
+    except Exception as e:
+        flash(f"Error al registrar usuario en la base de datos: {str(e)}", "error")
         return redirect(url_for("index"))
 
 
