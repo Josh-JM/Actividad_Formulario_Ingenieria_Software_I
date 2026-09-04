@@ -1,99 +1,55 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask
 from dotenv import load_dotenv
-from supabase import create_client, Client
 
-# Cargar variables de entorno desde el archivo .env
+from repositories.user_repository import UserRepository
+from services.email_service import EmailService
+from services.user_service import UserService
+from controllers.user_controller import UserController
+
+# 1. Cargar variables de entorno desde el archivo .env
 load_dotenv()
 
+# 2. Inicializar la aplicación Flask
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "super-secret-key-dev")
 
-# Configurar Cliente de Supabase
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+# 3. Configuración de la ruta de la base de datos SQLite
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+_raw_db = os.getenv("DATABASE_PATH", "database.db").strip()
 
-supabase_client: Client = None
+if _raw_db.startswith("sqlite:////"):
+    _clean_db = _raw_db[10:]
+elif _raw_db.startswith("sqlite:///"):
+    _clean_db = _raw_db[10:]
+elif _raw_db.startswith("sqlite://"):
+    _clean_db = _raw_db[9:]
+elif _raw_db.startswith("sqlite:"):
+    _clean_db = _raw_db[7:]
+else:
+    _clean_db = _raw_db
 
-if SUPABASE_URL and SUPABASE_KEY and SUPABASE_URL != "https://your-project-id.supabase.co":
-    try:
-        supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
-    except Exception as e:
-        print(f"Error al inicializar cliente de Supabase: {e}")
+DATABASE_PATH = _clean_db if os.path.isabs(_clean_db) else os.path.normpath(os.path.join(BASE_DIR, _clean_db))
+SCHEMA_PATH = os.path.join(BASE_DIR, "schema.sql")
+
+# 4. Inyección de Dependencias (Principios SOLID: DIP & SRP)
+user_repository = UserRepository(db_path=DATABASE_PATH)
+user_repository.init_db(schema_path=SCHEMA_PATH)
+
+email_service = EmailService()
+user_service = UserService(user_repository=user_repository, email_service=email_service)
+user_controller = UserController(user_service=user_service)
 
 
-@app.route("/")
+# 5. Enrutamiento Web (Boundary / Delegación al Controlador)
+@app.route("/", methods=["GET"])
 def index():
-    return render_template("index.html")
+    return user_controller.show_registration_form()
 
 
 @app.route("/register", methods=["POST"])
 def register():
-    first_name = request.form.get("first_name", "").strip()
-    last_name = request.form.get("last_name", "").strip()
-    email = request.form.get("email", "").strip()
-    age = request.form.get("age", "").strip()
-    password = request.form.get("password", "")
-    confirm_password = request.form.get("confirm_password", "")
-
-    # Validaciones básicas de campos vacíos
-    if not all([first_name, last_name, email, age, password, confirm_password]):
-        flash("Todos los campos son obligatorios.", "error")
-        return redirect(url_for("index"))
-
-    # Validar coincidencia de contraseña
-    if password != confirm_password:
-        flash("Las contraseñas no coinciden.", "error")
-        return redirect(url_for("index"))
-
-    # Validar edad numérica
-    try:
-        age_int = int(age)
-        if age_int < 1 or age_int > 120:
-            flash("Ingresa una edad válida.", "error")
-            return redirect(url_for("index"))
-    except ValueError:
-        flash("La edad debe ser un número entero.", "error")
-        return redirect(url_for("index"))
-
-    # Verificar si el cliente de Supabase está configurado
-    if not supabase_client:
-        flash(
-            "Configura tus credenciales SUPABASE_URL y SUPABASE_KEY en el archivo .env antes de registrarte.",
-            "error",
-        )
-        return redirect(url_for("index"))
-
-    try:
-        # Registrar el usuario en Supabase Auth enviando los metadatos
-        # Supabase enviará automáticamente el correo de verificación configurado
-        response = supabase_client.auth.sign_up(
-            {
-                "email": email,
-                "password": password,
-                "options": {
-                    "data": {
-                        "first_name": first_name,
-                        "last_name": last_name,
-                        "age": age_int,
-                    }
-                },
-            }
-        )
-
-        if response.user:
-            return render_template("success.html", email=email)
-        else:
-            flash("No se pudo completar el registro. Inténtalo nuevamente.", "error")
-            return redirect(url_for("index"))
-
-    except Exception as e:
-        error_msg = str(e)
-        if "User already registered" in error_msg:
-            flash("Este correo electrónico ya está registrado.", "error")
-        else:
-            flash(f"Error al registrar usuario: {error_msg}", "error")
-        return redirect(url_for("index"))
+    return user_controller.handle_registration()
 
 
 if __name__ == "__main__":

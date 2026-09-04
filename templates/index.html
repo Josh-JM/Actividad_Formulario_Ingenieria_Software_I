@@ -10,9 +10,8 @@
   <div class="container">
     <div class="glass-card">
       <div class="header">
-        <span class="brand-badge">✨ Supabase + Flask Auth</span>
-        <h1>Crear nueva cuenta</h1>
-        <p>Ingresa tus datos personales para registrarte</p>
+        <h1>Crear nueva <span class="text-highlight">cuenta</span></h1>
+        <p>Ingresa tus datos personales para registrarte en el sistema</p>
       </div>
 
       <!-- Flash Messages -->
@@ -21,7 +20,18 @@
           <div class="flash-container">
             {% for category, message in messages %}
               <div class="flash-message {{ category }}">
-                <span>{% if category == 'error' %}⚠️{% else %}✅{% endif %}</span>
+                {% if category == 'error' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                {% else %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
+                {% endif %}
                 <span>{{ message }}</span>
               </div>
             {% endfor %}
@@ -29,15 +39,20 @@
         {% endif %}
       {% endwith %}
 
-      <form id="registerForm" action="{{ url_for('register') }}" method="POST">
+      <form id="registerForm" action="{{ url_for('register') }}" method="POST" novalidate>
         <div class="form-grid">
           
           <!-- Nombre -->
           <div class="input-group">
             <label for="first_name">Nombre</label>
             <div class="input-wrapper">
-              <input type="text" id="first_name" name="first_name" class="form-control" placeholder="Ej. Juan" required>
-              <span class="input-icon">👤</span>
+              <input type="text" id="first_name" name="first_name" class="form-control" placeholder="Juan" required>
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </span>
             </div>
           </div>
 
@@ -45,8 +60,13 @@
           <div class="input-group">
             <label for="last_name">Apellidos</label>
             <div class="input-wrapper">
-              <input type="text" id="last_name" name="last_name" class="form-control" placeholder="Ej. Pérez" required>
-              <span class="input-icon">👤</span>
+              <input type="text" id="last_name" name="last_name" class="form-control" placeholder="Pérez" required>
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </span>
             </div>
           </div>
 
@@ -54,27 +74,63 @@
           <div class="input-group full-width">
             <label for="email">Correo Electrónico</label>
             <div class="input-wrapper">
-              <input type="email" id="email" name="email" class="form-control" placeholder="nombre@ejemplo.com" required>
-              <span class="input-icon">✉️</span>
+              <input type="email" id="email" name="email" class="form-control" placeholder="nombre@correo.com" required>
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+              </span>
             </div>
           </div>
 
-          <!-- Edad -->
+          <!-- Edad (Regla 1: Mínimo 18 años) -->
           <div class="input-group full-width">
-            <label for="age">Edad</label>
+            <label for="age">
+              <span>Edad</span>
+              <span class="input-hint">Mínimo 18 años</span>
+            </label>
             <div class="input-wrapper">
-              <input type="number" id="age" name="age" class="form-control" placeholder="Ej. 25" min="1" max="120" required>
-              <span class="input-icon">🎂</span>
+              <input type="number" id="age" name="age" class="form-control" placeholder="25" min="18" max="100" required>
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </span>
             </div>
           </div>
 
-          <!-- Contraseña -->
+          <!-- Contraseña (Regla 2: Mínimo 8 caracteres, alfanumérica) -->
           <div class="input-group full-width">
-            <label for="password">Contraseña</label>
+            <label for="password">
+              <span>Contraseña</span>
+              <span class="input-hint">Mínimo 8 caracteres</span>
+            </label>
             <div class="input-wrapper">
-              <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" minlength="6" required>
-              <span class="input-icon">🔒</span>
-              <button type="button" class="toggle-password" data-target="password" title="Mostrar/Ocultar">🔒</button>
+              <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" minlength="8" required>
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </span>
+              <button type="button" class="toggle-password" data-target="password" title="Mostrar/Ocultar contraseña" aria-label="Mostrar u ocultar contraseña">
+                <svg class="icon-eye" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+            <div class="password-requirements">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              <span>Debe contener al menos 8 caracteres, incluyendo letras y números.</span>
             </div>
           </div>
 
@@ -82,9 +138,19 @@
           <div class="input-group full-width">
             <label for="confirm_password">Confirmar Contraseña</label>
             <div class="input-wrapper">
-              <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="••••••••" minlength="6" required>
-              <span class="input-icon">🛡️</span>
-              <button type="button" class="toggle-password" data-target="confirm_password" title="Mostrar/Ocultar">🔒</button>
+              <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="••••••••" minlength="8" required>
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <polyline points="9 12 11 14 15 10"></polyline>
+                </svg>
+              </span>
+              <button type="button" class="toggle-password" data-target="confirm_password" title="Mostrar/Ocultar contraseña" aria-label="Mostrar u ocultar contraseña">
+                <svg class="icon-eye" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
             </div>
           </div>
 
@@ -93,13 +159,13 @@
         <!-- Submit Button -->
         <button type="submit" id="submitBtn" class="btn-submit">
           <span class="spinner" id="btnSpinner"></span>
-          <span id="btnText">Registrarse</span>
+          <span id="btnText">Registrar Cuenta</span>
+          <svg id="btnIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
         </button>
       </form>
-
-      <div class="footer-text">
-        <p>¿Ya tienes una cuenta? <a href="#">Iniciar Sesión</a></p>
-      </div>
 
     </div>
   </div>
